@@ -2,7 +2,6 @@
 
 module AMQP
   def self.start_web_dispatcher(*args)
-    p "web worker args: #{args.inspect}"
     if defined?(PhusionPassenger) 
       PhusionPassenger.on_event(:starting_worker_process) do |forked| 
         if forked
