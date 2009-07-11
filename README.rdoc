@@ -14,6 +14,6 @@ And that's it! This will set up AMQP for any ruby app server (tested on mongrel,
 and it should just work.
 
 = Improve!
-As I hinted before, it's considered bad practice to use MQ.new over and over, as it creates a new AMQP channel, and that creates a new Erlang process in RabbitMQ. Erlang processes are super light weight, but you'll be wasting them and causing the Erlang GC headaches if you create them wantonly. So don't do that. If you'd like to add that or any other features, start forking!
+As I hinted before, it's considered bad practice to use MQ.new over and over, as it creates a new AMQP channel, and that creates a new Erlang process in RabbitMQ. Erlang processes are super light weight, but you'll be wasting them and causing the Erlang VM GC headaches if you create them wantonly. So don't do that. If you'd like to add that or any other features, start forking!
 
 dan@kallistec.com
