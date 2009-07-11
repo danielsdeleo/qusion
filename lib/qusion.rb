@@ -5,6 +5,10 @@ end
 
 require QUSION_ROOT + "qusion/em"
 require QUSION_ROOT + "qusion/amqp"
+require QUSION_ROOT + "qusion/channel_pool"
 
 module Qusion
+  def self.channel
+    ChannelPool.instance.channel
+  end
 end
