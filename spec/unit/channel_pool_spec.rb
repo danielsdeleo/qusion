@@ -24,8 +24,9 @@ describe ChannelPool do
   end
   
   it "should default to a pool size of 5" do
-    MQ.should_receive(:new).exactly(5).times
+    MQ.should_receive(:new).exactly(5).times.and_return("swanky")
     ChannelPool.instance.pool
+    ChannelPool.instance.instance_variable_get(:@pool).should == %w{ swanky swanky swanky swanky swanky}
   end
   
   it "should return a channel in a round-robin" do

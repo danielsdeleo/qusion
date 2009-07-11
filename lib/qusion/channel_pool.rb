@@ -20,19 +20,20 @@ module Qusion
     end
     
     def channel
-      channel = @pool.shift
-      @pool << channel
+      channel = pool.shift
+      pool << channel
       channel
     end
     
     def pool
-      @pool ||= initialize_pool
+      initialize_pool unless @pool
+      @pool
     end
     
     def initialize_pool
       @pool = []
       self.class.pool_size.times do
-        @pool << MQ.new
+        @pool.push(MQ.new)
       end
     end
     
