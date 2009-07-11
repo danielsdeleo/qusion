@@ -1,0 +1,19 @@
+= Qusion
+Qusion lives to make AMQP[http://github.com/tmm1/amqp] work with your webserver, and make it easy. Right now, it's just a set of monkey patches that sets up the required callbacks and/or worker threads so that AMQP will work with Passenger, Thin, or Mongrel. But, there's a few more bits of infrastructure it _could_ handle, such as managing an AMQP channel or pool of channels...
+
+= Getting Started
+If you're using rails, put Qusion somewhere where rails will find it, like in vendor/gems. Next, in your config/environment.rb, add something like:
+  
+  # config.gem amqp, require "mq", etc ...
+  AMQP.start_web_dispatcher(:host => "your_ampq_server", etc.) # same as options to AMQP.start()
+  
+And that's it! This will set up AMQP for any ruby app server (tested on mongrel, thin, and passenger). Now, you can use all of AMQP's functionality as normal. In your controllers or models, you might have:
+
+  MQ.new.queue("my-work-queue").publish("do work, son!")
+  
+and it should just work.
+
+= Improve!
+As I hinted before, it's considered bad practice to use MQ.new over and over, as it creates a new AMQP channel, and that creates a new Erlang process in RabbitMQ. Erlang processes are super light weight, but you'll be wasting them and causing the Erlang GC headaches if you create them wantonly. So don't do that. If you'd like to add that or any other features, start forking!
+
+dan@kallistec.com
