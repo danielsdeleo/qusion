@@ -1,10 +1,15 @@
 = Qusion
-Qusion lives to make AMQP[http://github.com/tmm1/amqp] work with your webserver, and make it easy. Right now, it's just a set of monkey patches that sets up the required callbacks and/or worker threads so that AMQP will work with Passenger, Thin, or Mongrel. But, there's a few more bits of infrastructure it _could_ handle, such as managing an AMQP channel or pool of channels...
+Qusion lives to make AMQP[http://github.com/tmm1/amqp] work with your webserver, and make it easy. Right now, it has two features
+* A set of monkey patches that sets up the required callbacks and/or worker threads so that AMQP will work with Passenger, Thin, or Mongrel.
+* A Channel Pool. You can cause problems for yourself if you create new channels (with MQ.new) for every request. The pool sets up a few of these when your app starts and reuses them.
 
 = Getting Started
+First you'll need the amqp library and a working RabbitMQ installation. Ezmobius has a good walk-through on the readme for nanite[http://github.com/ezmobius/nanite/] if you haven't done this yet.
+
 If you're using rails, put Qusion somewhere where rails will find it, like in vendor/gems. Next, in your config/environment.rb, add something like:
   
-  # config.gem amqp, require "mq", etc ...
+  # config.gem stuff...
+  require "qusion" # or require "#{RAILS_ROOT}/vendor/gems/qusion/lib/qusion" or whatever...
   AMQP.start_web_dispatcher(:host => "your_ampq_server", etc.) # same as options to AMQP.start()
   
 And that's it! This will set up AMQP for any ruby app server (tested on mongrel, thin, and passenger). Now, you can use all of AMQP's functionality as normal. In your controllers or models, you might have:
@@ -13,7 +18,20 @@ And that's it! This will set up AMQP for any ruby app server (tested on mongrel,
   
 and it should just work.
 
+= Channel Pools
+It's considered bad practice to use MQ.new over and over, as it creates a new AMQP channel, and that creates a new Erlang process in RabbitMQ. Erlang processes are super light weight, but you'll be wasting them and causing the Erlang VM GC headaches if you create them wantonly. So don't do that. Instead, use the channel pool provided by Qusion. It's simple: wherever you'd normally put MQ.new, just replace it with Qusion.channel. Examples:
+
+  # Create a queue:
+  Qusion.channel.queue("my-worker-queue")
+  # Topics:
+  Qusion.channel.topic("my-topic-exchange")
+  # etc.
+  
+This feature is a bit experimental, so the optimal pool size isn't known yet. The default is 5. You can change it by adding something like the following to your environment.rb:
+
+  Qusion.channel_pool_size(3)
+  
 = Improve!
-As I hinted before, it's considered bad practice to use MQ.new over and over, as it creates a new AMQP channel, and that creates a new Erlang process in RabbitMQ. Erlang processes are super light weight, but you'll be wasting them and causing the Erlang VM GC headaches if you create them wantonly. So don't do that. If you'd like to add a MQ channel pool or any other features, start forking!
+Qusion is probably more optimistic than it should be. It doesn't include any way to recover if your server is idle and the connection to RabbitMQ times out or something else goes wrong. If you run into an issue like this, feel free to fork and fix, or contact me directly if you can't fix it yourself. Other bright ideas? Fork!
 
 dan@kallistec.com
