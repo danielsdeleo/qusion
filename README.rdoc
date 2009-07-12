@@ -34,4 +34,7 @@ This feature is a bit experimental, so the optimal pool size isn't known yet. Th
 = Improve!
 Qusion is probably more optimistic than it should be. It doesn't include any way to recover if your server is idle and the connection to RabbitMQ times out or something else goes wrong. If you run into an issue like this, feel free to fork and fix, or contact me directly if you can't fix it yourself. Other bright ideas? Fork!
 
+= Shouts
+Qusion's code for Phusion Passenger's starting_worker_process event was originally posted by Aman Gupta (tmm1[http://github.com/tmm1]) on the AMQP list[http://groups.google.com/group/ruby-amqp] 
+
 dan@kallistec.com
