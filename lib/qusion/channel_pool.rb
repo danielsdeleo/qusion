@@ -6,7 +6,11 @@ module Qusion
     include Singleton
     
     class << self
-      attr_writer :pool_size
+      
+      def pool_size=(new_pool_size)
+        reset
+        @pool_size = new_pool_size
+      end
       
       def pool_size
         @pool_size || 5
@@ -20,9 +24,9 @@ module Qusion
     end
     
     def channel
-      channel = pool.shift
-      pool << channel
-      channel
+      @i ||= 1
+      @i = (@i + 1) % self.class.pool_size
+      pool[@i]
     end
     
     def pool
