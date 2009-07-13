@@ -13,7 +13,7 @@ module Qusion
       end
       
       def pool_size
-        @pool_size || 5
+        @pool_size ||= 5
       end
       
       def reset
@@ -23,26 +23,24 @@ module Qusion
       
     end
     
+    attr_reader :pool
+    
     def channel
       @i ||= 1
-      @i = (@i + 1) % self.class.pool_size
+      @i = (@i + 1) % pool_size
       pool[@i]
     end
     
     def pool
-      initialize_pool unless @pool
-      @pool
-    end
-    
-    def initialize_pool
-      @pool = []
-      self.class.pool_size.times do
-        @pool.push(MQ.new)
-      end
+      @pool ||= Array.new(pool_size) { MQ.new }
     end
     
     def reset
       @pool = nil
+    end
+    
+    def pool_size
+      self.class.pool_size
     end
     
   end
