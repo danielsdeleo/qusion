@@ -1,7 +1,8 @@
 = Qusion
-Qusion lives to make AMQP[http://github.com/tmm1/amqp] work with your webserver, and make it easy. Right now, it has two features
+Qusion lives to make AMQP[http://github.com/tmm1/amqp] work with your webserver, and make it easy. Right now, it has three features:
 * A set of monkey patches that sets up the required callbacks and/or worker threads so that AMQP will work with Passenger, Thin, or Mongrel.
 * A Channel Pool. You can cause problems for yourself if you create new channels (with MQ.new) for every request. The pool sets up a few of these when your app starts and reuses them.
+* YAML configuration files. If you're using Rails or Merb, create config/amqp.yml, then fill in the details for development, test, and production. Use Qusion.start() in your environment.rb file and you're good to go.
 
 = Getting Started
 First you'll need the amqp library and a working RabbitMQ installation. Ezmobius has a good walk-through on the readme for nanite[http://github.com/ezmobius/nanite/] if you haven't done this yet.
@@ -10,7 +11,8 @@ If you're using rails, put Qusion somewhere where rails will find it, like in ve
   
   # config.gem stuff...
   require "qusion" # or require "#{RAILS_ROOT}/vendor/gems/qusion/lib/qusion" or whatever...
-  AMQP.start_web_dispatcher(:host => "your_ampq_server", etc.) # same as options to AMQP.start()
+  Qusion.start # no options needed if you're using config/amqp.yml or the default settings.
+  
   
 And that's it! This will set up AMQP for any ruby app server (tested on mongrel, thin, and passenger). Now, you can use all of AMQP's functionality as normal. In your controllers or models, you might have:
 
@@ -31,10 +33,46 @@ This feature is a bit experimental, so the optimal pool size isn't known yet. Th
 
   Qusion.channel_pool_size(3)
   
-= Improve!
-Support for YAML configuration files in config/amqp.yml is coming as soon as I get a chance to test in Rails and Merb. 
+= Configuration
+If you're using rails or mongrel, you can put your AMQP server details in config/amqp.yml and Qusion will load it when you call Qusion.start(). Example:
+  development:
+    host: localhost
+    port: 5672
+    user: guest
+    pass: guest
+    vhost: /
+    timeout: 3600
+    logging: false
+    ssl: false
+  
+  test:
+    host: localhost
+    port: 5672
+    ...
+  
+  production:
+    host: localhost
+    port: 5672
+    ...
 
-Still to do: Qusion is probably more optimistic than it should be. It doesn't include any way to recover if your server is idle and the connection to RabbitMQ times out or something else goes wrong. If you run into an issue like this, feel free to fork and fix, or contact me directly if you can't fix it yourself. Other bright ideas? Patches accepted!
+If you're too hardcore for rails or merb (maybe you're using Sinatra or Ramaze), you can still use a YAML config file, but there's no support for different environments. So do something like this:
+
+  # Tell Qusion where your config file is:
+  Qusion.start("/path/to/amqp.yml")
+  
+  # Your configuration looks like this:
+  application:
+    host: localhost
+    port: 5672
+    ...
+
+If you just want to get started without configuring anything, Qusion.start() will use the default options if it can't find a config file. And, finally, you can give options directly to Qusion.start() like this:
+
+  Qusion.start(:host => "my-amqp-broker.mydomain.com", :user => "me", :pass => "am_I_really_putting_this_in_VCS?")
+
+
+= Improve!
+Still to do: Qusion is probably more optimistic than it should be. It doesn't include any way to recover if your server is idle and the connection to RabbitMQ times out or something else goes wrong. Evented Mongrel isn't handled properly. If you run into an issue like this, feel free to fork and fix, or contact me directly if you can't fix it yourself. Other bright ideas? Patches accepted!
 
 = Shouts
 Qusion's code for Phusion Passenger's starting_worker_process event was originally posted by Aman Gupta (tmm1[http://github.com/tmm1]) on the AMQP list[http://groups.google.com/group/ruby-amqp] 
