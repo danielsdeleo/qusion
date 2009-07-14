@@ -12,6 +12,11 @@ require QUSION_ROOT + "qusion/channel_pool"
 require QUSION_ROOT + "qusion/amqp_config"
 
 module Qusion
+  def self.start(*opts)
+    amqp_opts = AmqpConfig.new(*opts).config_opts
+    AMQP.start_web_dispatcher(amqp_opts)
+  end
+  
   def self.channel
     ChannelPool.instance.channel
   end

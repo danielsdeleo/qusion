@@ -46,17 +46,3 @@ describe ChannelPool do
   end
   
 end
-
-describe Qusion do
-  it "should provide a convenience method to get a channel from the pool" do
-    channel_pool = mock("channel pool")
-    ChannelPool.should_receive(:instance).and_return(channel_pool)
-    channel_pool.should_receive(:channel)
-    Qusion.channel
-  end
-  
-  it "should provide a convenience method to set the channel pool size" do
-    ChannelPool.should_receive(:pool_size=).with(7)
-    Qusion.channel_pool_size(7)
-  end
-end
