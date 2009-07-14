@@ -36,6 +36,11 @@ describe AmqpConfig do
     conf.config_opts.should == {:host => "my-broker.mydomain.com"}
   end
   
+  it "should use the default amqp options in rails if amqp.yml doesn't exist" do
+    RAILS_ROOT = File.dirname(__FILE__) + '/../'
+    AmqpConfig.new.config_opts.should == {}
+  end
+  
   it "should load a YAML file when using a framework" do
     conf = AmqpConfig.new
     conf.stub!(:config_path).and_return(File.dirname(__FILE__) + "/../fixtures/framework-amqp.yml")

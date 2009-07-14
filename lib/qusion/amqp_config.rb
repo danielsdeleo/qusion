@@ -33,29 +33,36 @@ module Qusion
     end
     
     def load_config_opts
-      if config_path && framework_env
-        load_framework_amqp_opts_file
-      elsif config_path
-        load_amqp_opts_file
+      if config_path && config_from_yaml = load_amqp_config_file
+        if framework_env
+          framework_amqp_opts(config_from_yaml)
+        else
+          amqp_opts(config_from_yaml)
+        end
       else
         {}
       end
     end
     
-    def load_framework_amqp_opts_file
-      opts = {}
-      YAML.load_file(config_path)[framework_env.to_s].each do |option, value|
-        opts[option.to_sym] = value
-      end
-      opts
+    def framework_amqp_opts(config_hash)
+      symbolize_keys(config_hash[framework_env.to_s])
     end
     
-    def load_amqp_opts_file
-      opts = {}
-      YAML.load_file(config_path).first.last.each do |option, value|
-        opts[option.to_sym] = value
+    def amqp_opts(config_hash)
+      symbolize_keys(config_hash.first.last)
+    end
+    
+    def symbolize_keys(config_hash)
+      symbolized_hsh = {}
+      config_hash.each {|option, value| symbolized_hsh[option.to_sym] = value }
+      symbolized_hsh
+    end
+    
+    def load_amqp_config_file
+      begin
+        YAML.load_file(config_path)
+      rescue Errno::ENOENT
       end
-      opts
     end
     
   end
