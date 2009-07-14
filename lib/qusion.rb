@@ -9,6 +9,7 @@ require "mq"
 require QUSION_ROOT + "qusion/em"
 require QUSION_ROOT + "qusion/amqp"
 require QUSION_ROOT + "qusion/channel_pool"
+require QUSION_ROOT + "qusion/amqp_config"
 
 module Qusion
   def self.channel
