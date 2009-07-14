@@ -10,17 +10,25 @@ module AMQP
           @conn = nil
         end 
         th = Thread.current 
-        Thread.new{ 
+        Thread.new do
           self.start(*args) 
-        } 
+        end
+        die_gracefully_on_signal
       end
     elsif defined?(::Thin)
       @settings = settings.merge(*args)
+      die_gracefully_on_signal
     else
       th = Thread.current 
-      Thread.new{ 
+      Thread.new do
         self.start(*args) 
-      } 
+      end
+      die_gracefully_on_signal
     end
+  end
+  
+  def self.die_gracefully_on_signal
+    Signal.trap("INT") { AMQP.stop { EM.stop } }
+    Signal.trap("TERM") { AMQP.stop { EM.stop } }
   end
 end
