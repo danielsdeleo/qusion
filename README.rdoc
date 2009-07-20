@@ -34,7 +34,9 @@ This feature is a bit experimental, so the optimal pool size isn't known yet. Th
   Qusion.channel_pool_size(3)
   
 = Configuration
-If you're using rails or mongrel, you can put your AMQP server details in config/amqp.yml and Qusion will load it when you call Qusion.start(). Example:
+If you're using rails or merb, you can put your AMQP server details in config/amqp.yml and Qusion will load it when you call Qusion.start(). Example:
+  
+  # Put this in config/amqp.yml
   development:
     host: localhost
     port: 5672
