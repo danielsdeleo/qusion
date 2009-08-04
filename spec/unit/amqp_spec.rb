@@ -6,6 +6,7 @@ describe AMQP do
   after(:each) do
     Object.send(:remove_const, :PhusionPassenger) if defined? PhusionPassenger
     Object.send(:remove_const, :Thin) if defined? Thin
+    Object.send(:remove_const, :Mongrel) if defined? Mongrel
   end
   
   it "should kill the reactor and start a new AMQP connection when forked in Passenger" do
@@ -26,8 +27,9 @@ describe AMQP do
     AMQP.instance_variable_get(:@settings)[:cookie].should == "yummy"
   end
   
-  it "should start a worker thread when running under other web/app servers" do
+  it "should start a worker thread when running under Mongrel" do
     AMQP.should_receive(:die_gracefully_on_signal)
+    Mongrel = Object.new
     AMQP.should_receive(:start)
     AMQP.start_web_dispatcher
   end
