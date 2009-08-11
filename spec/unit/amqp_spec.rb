@@ -3,6 +3,10 @@ require File.dirname(__FILE__) + "/../spec_helper"
 
 describe AMQP do
   
+  before do
+    AMQP.stub!(:settings).and_return({})
+  end
+  
   after(:each) do
     Object.send(:remove_const, :PhusionPassenger) if defined? PhusionPassenger
     Object.send(:remove_const, :Thin) if defined? Thin
@@ -22,7 +26,6 @@ describe AMQP do
   it "should set AMQP's connection settings when running under Thin" do
     AMQP.should_receive(:die_gracefully_on_signal)
     Thin = Object.new
-    AMQP.stub!(:settings).and_return({})
     AMQP.start_web_dispatcher({:cookie => "yummy"})
     AMQP.instance_variable_get(:@settings)[:cookie].should == "yummy"
   end

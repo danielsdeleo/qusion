@@ -6,6 +6,7 @@ end
 require "eventmachine"
 require "mq"
 
+require QUSION_ROOT + "qusion/server_spy"
 require QUSION_ROOT + "qusion/em"
 require QUSION_ROOT + "qusion/amqp"
 require QUSION_ROOT + "qusion/channel_pool"

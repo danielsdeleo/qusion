@@ -1,31 +1,26 @@
 # encoding: UTF-8
 
 module AMQP
-  def self.start_web_dispatcher(*args)
-    if defined?(PhusionPassenger) 
+  def self.start_web_dispatcher(amqp_settings={})
+    @settings = settings.merge(amqp_settings)
+    case ServerSpy.server_type
+    when :passenger
       PhusionPassenger.on_event(:starting_worker_process) do |forked| 
         if forked
           EM.kill_reactor
-          Thread.current[:mq] = nil 
-          @conn = nil
+          Thread.current[:mq], @conn = nil, nil
         end 
-        th = Thread.current 
-        Thread.new do
-          self.start(*args) 
-        end
+        Thread.new { self.start }
         die_gracefully_on_signal
       end
-    elsif defined?(::Mongrel)
-      th = Thread.current 
-      Thread.new do
-        self.start(*args) 
-      end
+    when :standard
+      Thread.new { self.start }
       die_gracefully_on_signal
-    elsif defined?(::Thin)
-      @settings = settings.merge(*args)
+    when :evented
       die_gracefully_on_signal
+    when :none
     else
-      puts "=> Qusion did not find a supported app server (This is normal for workling workers)"
+      raise ArgumentError, "AMQP#start_web_dispatcher requires an argument of [:standard|:evented|:passenger|:none]"
     end
   end
   
