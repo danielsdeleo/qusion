@@ -43,7 +43,7 @@ describe ServerSpy do
     ServerSpy.server_type.should == :evented
   end
   
-  # Rails after 2.2(?) before edge rails Aug 2009 loads thin if it's installed no matter what
+  # Rails after 2.2(?) to edge circa Aug 2009 loads thin if it's installed no matter what
   it "gives the server type as :standard if both Thin and Mongrel are defined" do
     Mongrel = Object.new
     Thin = Object.new
