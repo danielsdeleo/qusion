@@ -3,7 +3,7 @@
 module AMQP
   def self.start_web_dispatcher(amqp_settings={})
     @settings = settings.merge(amqp_settings)
-    case ServerSpy.server_type
+    case Qusion::ServerSpy.server_type
     when :passenger
       PhusionPassenger.on_event(:starting_worker_process) do |forked| 
         if forked
