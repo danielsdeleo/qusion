@@ -5,14 +5,26 @@ Qusion lives to make AMQP[http://github.com/tmm1/amqp] work with your webserver,
 * YAML configuration files. If you're using Rails or Merb, create config/amqp.yml, then fill in the details for development, test, and production. Use Qusion.start() in your environment.rb file and you're good to go.
 
 = Getting Started
-First you'll need the amqp library and a working RabbitMQ installation. Ezmobius has a good walk-through on the readme for nanite[http://github.com/ezmobius/nanite/] if you haven't done this yet.
+First you'll need the amqp library and a working RabbitMQ installation. This entails:
+* Install Erlang for your platform
+* Install RabbitMQ for your platform
+* (sudo) gem install amqp
+Ezmobius has a good walk-through on the readme for nanite[http://github.com/ezmobius/nanite/] if you haven't done this yet.
+== Install Qusion
+Start by installing Qusion as a plugin:
 
-If you're using rails, put Qusion somewhere where rails will find it, like in vendor/gems. Next, in your config/environment.rb, add something like:
+  script/plugin install git://github.com/danielsdeleo/qusion.git
+
+Next, in your config/environment.rb, add something like:
   
-  # config.gem stuff...
-  require "qusion" # or require "#{RAILS_ROOT}/vendor/gems/qusion/lib/qusion" or whatever...
-  Qusion.start # no options needed if you're using config/amqp.yml or the default settings.
-  
+  # Add eventmachine and amqp gems to config.gem to get config.gem goodies:
+  config.gem "eventmachine"
+  config.gem "amqp"
+
+  # Start AMQP after rails loads:
+  config.after_initialize do
+    Qusion.start # no options needed if you're using config/amqp.yml or the default settings.
+  end
   
 And that's it! This will set up AMQP for any ruby app server (tested on mongrel, thin, and passenger). Now, you can use all of AMQP's functionality as normal. In your controllers or models, you might have:
 
