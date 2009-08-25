@@ -1,6 +1,6 @@
 = Qusion
-Qusion lives to make AMQP[http://github.com/tmm1/amqp] work with your webserver, and make it easy. Right now, it has three features:
-* A set of monkey patches that sets up the required callbacks and/or worker threads so that AMQP will work with Passenger, Thin, or Mongrel.
+Qusion makes AMQP[http://github.com/tmm1/amqp] work with your webserver with no fuss. It's a simple library/plugin with three features:
+* A set of monkey patches that sets up the required callbacks and/or worker threads so that AMQP will work with Passenger, Thin, or Mongrel. WEBrick, SCGI, and Evented Mongrel are experimentally supported, but not heavily tested.
 * A Channel Pool. You can cause problems for yourself if you create new channels (with MQ.new) for every request. The pool sets up a few of these when your app starts and reuses them.
 * YAML configuration files. If you're using Rails or Merb, create config/amqp.yml, then fill in the details for development, test, and production. Use Qusion.start() in your environment.rb file and you're good to go.
 
@@ -85,10 +85,11 @@ If you just want to get started without configuring anything, Qusion.start() wil
   Qusion.start(:host => "my-amqp-broker.mydomain.com", :user => "me", :pass => "am_I_really_putting_this_in_VCS?")
 
 
-= Improve!
-Still to do: Qusion is probably more optimistic than it should be. It doesn't include any way to recover if your server is idle and the connection to RabbitMQ times out or something else goes wrong. Evented Mongrel isn't handled properly. If you run into an issue like this, feel free to fork and fix, or contact me directly if you can't fix it yourself. Other bright ideas? Patches accepted!
+= Bugs? Hacking?
+If you find any bugs, or feel the need to add a feature, fork away. You can also contact me directly via the email address in my profile if you have any quesions.
 
 = Shouts
-Qusion's code for Phusion Passenger's starting_worker_process event was originally posted by Aman Gupta (tmm1[http://github.com/tmm1]) on the AMQP list[http://groups.google.com/group/ruby-amqp] 
+* Qusion's code for Phusion Passenger's starting_worker_process event was originally posted by Aman Gupta (tmm1[http://github.com/tmm1]) on the AMQP list[http://groups.google.com/group/ruby-amqp]
+* Brightbox's Warren[http://github.com/brightbox/warren] library provides some similar functionality. It doesn't support webserver-specific EventMachine setup, but it does have built-in encryption and support for the synchronous (non-EventMachine) Bunny[http://github.com/celldee/bunny] AMQP client.
 
 dan@kallistec.com
