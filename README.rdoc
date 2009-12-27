@@ -4,6 +4,13 @@ Qusion makes AMQP[http://github.com/tmm1/amqp] work with your webserver with no 
 * A Channel Pool. You can cause problems for yourself if you create new channels (with MQ.new) for every request. The pool sets up a few of these when your app starts and reuses them.
 * YAML configuration files. If you're using Rails or Merb, create config/amqp.yml, then fill in the details for development, test, and production. Use Qusion.start() in your environment.rb file and you're good to go.
 
+= Before You Start
+Qusion makes it easy to just install the plugin and start using AMQP in your application. But there are many ways to use background jobs within a Rails app, so it's worth taking some time to consider the tradeoffs of each approach.
+
+* If your background job needs are simple and you're using a relational database, Delayed::Job[http://github.com/tobi/delayed_job/] lets you schedule background tasks through the database. You won't need to run another application (the AMQP Broker) to keep your app running. 
+* The 0.6.x version of the ruby amqp library may drop messages when the AMQP broker goes down. Pivotal Labs has discussed this problem on their blog[http://pivots.pivotallabs.com/users/will/blog/articles/966-how-to-not-test-rabbitmq-part-1]. This issue will likely be addressed in the 0.7.0 release of amqp, but can be avoided entirely using a synchronous amqp library such as bunny[http://github.com/celldee/bunny]. For a ready-made background job solution using Bunny to publish jobs to the queue, see Minion[http://github.com/orionz/minion/].
+* Qusion runs EventMachine in a separate thread on Phusion Passenger, Mongrel, and other non-evented servers. There are some inefficiencies in Ruby 1.8's threading model that make running EM in a thread quite slow. Joe Damato and Aman Gupta have created a patch[http://github.com/ice799/matzruby/tree/heap_stacks] for the problem which is included in an experimental branch of REE. You can learn more about the patch from Phusion's Blog[http://blog.phusion.nl/2009/12/15/google-tech-talk-on-ruby-enterprise-edition/]. 
+
 = Getting Started
 First you'll need the amqp library and a working RabbitMQ installation. This entails:
 * Install Erlang for your platform
