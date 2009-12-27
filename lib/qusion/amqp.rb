@@ -10,11 +10,11 @@ module AMQP
           EM.kill_reactor
           Thread.current[:mq], @conn = nil, nil
         end 
-        Thread.new { self.start }
+        Thread.new { start }
         die_gracefully_on_signal
       end
     when :standard
-      Thread.new { self.start }
+      Thread.new { start }
       die_gracefully_on_signal
     when :evented
       die_gracefully_on_signal
@@ -25,7 +25,7 @@ module AMQP
   end
   
   def self.die_gracefully_on_signal
-    Signal.trap("INT") { AMQP.stop { EM.stop } }
+    Signal.trap("INT")  { AMQP.stop { EM.stop } }
     Signal.trap("TERM") { AMQP.stop { EM.stop } }
   end
 end

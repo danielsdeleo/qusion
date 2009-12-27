@@ -25,12 +25,12 @@ describe ChannelPool do
   
   it "should create a pool of AMQP channels" do
     ChannelPool.pool_size = 3
-    MQ.should_receive(:new).exactly(3).times
+    ::MQ.should_receive(:new).exactly(3).times
     @channel_pool.pool
   end
   
   it "should default to a pool size of 5" do
-    MQ.should_receive(:new).exactly(5).times.and_return("swanky")
+    ::MQ.should_receive(:new).exactly(5).times.and_return("swanky")
     @channel_pool.pool
     @channel_pool.instance_variable_get(:@pool).should == %w{ swanky swanky swanky swanky swanky}
   end
