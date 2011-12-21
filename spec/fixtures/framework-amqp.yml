@@ -7,7 +7,7 @@ development:
   timeout: 600
   logging: false
   ssl: false
-  
+
 test:
   host: localhost
   port: 5672
@@ -16,7 +16,7 @@ test:
   vhost: /
   logging: false
   ssl: false
-  
+
 production:
   host: localhost
   port: 5672

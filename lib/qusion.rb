@@ -17,11 +17,11 @@ module Qusion
     amqp_opts = AmqpConfig.new(*opts).config_opts
     AMQP.start_web_dispatcher(amqp_opts)
   end
-  
+
   def self.channel
     ChannelPool.instance.channel
   end
-  
+
   def self.channel_pool_size(new_pool_size)
     ChannelPool.pool_size = new_pool_size
   end
