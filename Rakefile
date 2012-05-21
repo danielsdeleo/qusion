@@ -25,7 +25,7 @@ namespace :spec do
     t.fail_on_error = false
   end
 
-  desc "Run all spec with RCov" 
+  desc "Run all spec with RCov"
   Spec::Rake::SpecTask.new(:rcov) do |t|
     t.rcov = true
     t.rcov_dir = 'doc/tools/coverage/'

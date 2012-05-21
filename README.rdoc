@@ -7,9 +7,9 @@ Qusion makes AMQP[http://github.com/tmm1/amqp] work with your webserver with no 
 = Before You Start
 Qusion makes it easy to just install the plugin and start using AMQP in your application. But there are many ways to use background jobs within a Rails app, so it's worth taking some time to consider the tradeoffs of each approach.
 
-* If your background job needs are simple and you're using a relational database, Delayed::Job[http://github.com/tobi/delayed_job/] lets you schedule background tasks through the database. You won't need to run another application (the AMQP Broker) to keep your app running. 
+* If your background job needs are simple and you're using a relational database, Delayed::Job[http://github.com/tobi/delayed_job/] lets you schedule background tasks through the database. You won't need to run another application (the AMQP Broker) to keep your app running.
 * The 0.6.x version of the ruby amqp library may drop messages when the AMQP broker goes down. Pivotal Labs has discussed this problem on their blog[http://pivots.pivotallabs.com/users/will/blog/articles/966-how-to-not-test-rabbitmq-part-1]. This issue will likely be addressed in the 0.7.0 release of amqp, but can be avoided entirely using a synchronous amqp library such as bunny[http://github.com/celldee/bunny]. For a ready-made background job solution using Bunny to publish jobs to the queue, see Minion[http://github.com/orionz/minion/].
-* Qusion runs EventMachine in a separate thread on Phusion Passenger, Mongrel, and other non-evented servers. There are some inefficiencies in Ruby 1.8's threading model that make running EM in a thread quite slow. Joe Damato and Aman Gupta have created a patch[http://github.com/ice799/matzruby/tree/heap_stacks] for the problem which is included in an experimental branch of REE. You can learn more about the patch from Phusion's Blog[http://blog.phusion.nl/2009/12/15/google-tech-talk-on-ruby-enterprise-edition/]. 
+* Qusion runs EventMachine in a separate thread on Phusion Passenger, Mongrel, and other non-evented servers. There are some inefficiencies in Ruby 1.8's threading model that make running EM in a thread quite slow. Joe Damato and Aman Gupta have created a patch[http://github.com/ice799/matzruby/tree/heap_stacks] for the problem which is included in an experimental branch of REE. You can learn more about the patch from Phusion's Blog[http://blog.phusion.nl/2009/12/15/google-tech-talk-on-ruby-enterprise-edition/].
 
 = Getting Started
 First you'll need the amqp library and a working RabbitMQ installation. This entails:
@@ -23,7 +23,7 @@ Start by installing Qusion as a plugin:
   script/plugin install git://github.com/danielsdeleo/qusion.git
 
 Next, in your config/environment.rb, add something like:
-  
+
   # Add eventmachine and amqp gems to config.gem to get config.gem goodies:
   config.gem "eventmachine"
   config.gem "amqp"
@@ -32,11 +32,11 @@ Next, in your config/environment.rb, add something like:
   config.after_initialize do
     Qusion.start # no options needed if you're using config/amqp.yml or the default settings.
   end
-  
+
 And that's it! This will set up AMQP for any ruby app server (tested on mongrel, thin, and passenger). Now, you can use all of AMQP's functionality as normal. In your controllers or models, you might have:
 
   MQ.new.queue("my-work-queue").publish("do work, son!")
-  
+
 and it should just work.
 
 = Channel Pools
@@ -47,14 +47,14 @@ It's considered bad practice to use MQ.new over and over, as it creates a new AM
   # Topics:
   Qusion.channel.topic("my-topic-exchange")
   # etc.
-  
+
 This feature is a bit experimental, so the optimal pool size isn't known yet. The default is 5. You can change it by adding something like the following to your environment.rb:
 
   Qusion.channel_pool_size(3)
-  
+
 = Configuration
 If you're using rails or merb, you can put your AMQP server details in config/amqp.yml and Qusion will load it when you call Qusion.start(). Example:
-  
+
   # Put this in config/amqp.yml
   development:
     host: localhost
@@ -65,12 +65,12 @@ If you're using rails or merb, you can put your AMQP server details in config/am
     timeout: 3600
     logging: false
     ssl: false
-  
+
   test:
     host: localhost
     port: 5672
     ...
-  
+
   production:
     host: localhost
     port: 5672
@@ -80,7 +80,7 @@ If you're too hardcore for rails or merb (maybe you're using Sinatra or Ramaze),
 
   # Tell Qusion where your config file is:
   Qusion.start("/path/to/amqp.yml")
-  
+
   # Your configuration looks like this:
   application:
     host: localhost
